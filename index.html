@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minecraft Welcome</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --sky-top: #a0d8ef;
+            --sky-bot: #d6eaf2;
+            --grass-top: #5e9d34;
+            --grass-side: #467a25;
+            --dirt: #5d3f27;
+            --stone: #757575;
+            --stone-dark: #4a4a4a;
+            --text-color: #e0e0e0;
+            --text-shadow: #212121;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            background: linear-gradient(to bottom, var(--sky-top), var(--sky-bot));
+            font-family: 'Press Start 2P', cursive;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        /* --- Scene Container --- */
+        .scene {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* --- Procedural Blocky Clouds --- */
+        .cloud {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.8);
+            width: 120px;
+            height: 40px;
+            box-shadow: 
+                40px -40px 0 0 rgba(255, 255, 255, 0.8),
+                -40px 40px 0 0 rgba(255, 255, 255, 0.8);
+            opacity: 0.9;
+            animation: floatClouds 60s linear infinite;
+        }
+
+        .cloud:nth-child(1) { top: 15%; left: -10%; transform: scale(1.5); animation-duration: 80s; }
+        .cloud:nth-child(2) { top: 25%; left: -20%; transform: scale(0.8); animation-duration: 65s; animation-delay: 10s; }
+        .cloud:nth-child(3) { top: 10%; left: -15%; transform: scale(1.2); animation-duration: 90s; animation-delay: 30s; }
+
+        @keyframes floatClouds {
+            from { left: -300px; }
+            to { left: 110vw; }
+        }
+
+        /* --- CSS Landscape Layers (Parallax Targets) --- */
+        .layer {
+            position: absolute;
+            bottom: 0;
+            left: -10%;
+            width: 120%; /* Extra width for parallax movement */
+            background-repeat: repeat-x;
+            image-rendering: pixelated;
+        }
+
+        /* Far Mountains - Stone blocks */
+        .layer-back {
+            height: 45vh;
+            background-color: transparent;
+            /* Creating a blocky mountain silhouette using gradients */
+            background-image: linear-gradient(135deg, var(--stone) 25%, transparent 25%), 
+                              linear-gradient(225deg, var(--stone) 25%, transparent 25%);
+            background-size: 80px 80px;
+            background-position: 0 0;
+            opacity: 0.7;
+            filter: brightness(0.8);
+            transform: translateZ(-20px) scale(1.2); /* Mock Z-depth */
+        }
+
+        /* Mid Hills - Grass blocks */
+        .layer-mid {
+            height: 25vh;
+            /* Blocky step pattern */
+            background: 
+                linear-gradient(to bottom, var(--grass-top) 20px, var(--grass-side) 20px, var(--dirt) 40px);
+            clip-path: polygon(
+                0% 100%, 0% 20%, 5% 20%, 5% 0%, 15% 0%, 15% 30%, 
+                25% 30%, 25% 10%, 35% 10%, 35% 40%, 45% 40%, 45% 10%, 
+                55% 10%, 55% 30%, 65% 30%, 65% 50%, 75% 50%, 75% 20%, 
+                85% 20%, 85% 40%, 95% 40%, 95% 10%, 100% 10%, 100% 100%
+            );
+            filter: drop-shadow(5px 5px 0px rgba(0,0,0,0.2));
+            z-index: 2;
+        }
+
+        /* Foreground - Detail blocks */
+        .layer-front {
+            height: 10vh;
+            bottom: -20px;
+            background-color: var(--grass-side);
+            background-image: 
+                linear-gradient(90deg, rgba(0,0,0,0.1) 1px, transparent 1px),
+                linear-gradient(rgba(0,0,0,0.1) 1px, transparent 1px);
+            background-size: 40px 40px;
+            border-top: 10px solid var(--grass-top);
+            z-index: 3;
+        }
+
+        /* --- Main Content --- */
+        .content {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            perspective: 500px;
+        }
+
+        h1 {
+            font-size: clamp(3rem, 10vw, 8rem);
+            color: var(--text-color);
+            letter-spacing: -2px;
+            text-transform: uppercase;
+            position: relative;
+            
+            /* The classic 3D block text look */
+            text-shadow: 
+                0px 4px 0px #9e9e9e,
+                0px 8px 0px #757575,
+                0px 12px 0px #424242,
+                0px 16px 0px #212121,
+                0px 20px 20px rgba(0,0,0,0.4);
+            
+            /* Floating Animation */
+            animation: floatText 4s ease-in-out infinite;
+            
+            /* Slight rotation for epic feel */
+            transform: rotateX(5deg);
+        }
+
+        /* Inner crack/texture detail on text */
+        h1::after {
+            content: "WELCOME";
+            position: absolute;
+            top: 0;
+            left: 0;
+            color: transparent;
+            background-image: radial-gradient(circle, rgba(0,0,0,0.1) 2px, transparent 2.5px);
+            background-size: 6px 6px;
+            -webkit-background-clip: text;
+            background-clip: text;
+            pointer-events: none;
+        }
+
+        @keyframes floatText {
+            0%, 100% { transform: translateY(0) rotateX(5deg); }
+            50% { transform: translateY(-15px) rotateX(5deg); }
+        }
+
+        /* --- Vignette & Lighting --- */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, transparent 30%, rgba(0,0,0,0.4) 100%);
+            z-index: 20;
+            pointer-events: none;
+        }
+
+        /* Sun glow */
+        .sun-glow {
+            position: absolute;
+            top: 20%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 40vw;
+            height: 40vw;
+            background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 70%);
+            z-index: 0;
+            pointer-events: none;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="sun-glow"></div>
+    <div class="overlay"></div>
+
+    <div class="scene" id="scene">
+        <div class="cloud"></div>
+        <div class="cloud"></div>
+        <div class="cloud"></div>
+
+        <div class="layer layer-back" data-speed="0.02"></div>
+        <div class="layer layer-mid" data-speed="0.05"></div>
+        <div class="layer layer-front" data-speed="0.09"></div>
+    </div>
+
+    <div class="content">
+        <h1>Welcome</h1>
+    </div>
+
+    <script>
+        // Minimal JS for subtle parallax effect
+        document.addEventListener('mousemove', (e) => {
+            const layers = document.querySelectorAll('.layer');
+            const x = (window.innerWidth - e.pageX * 2) / 100;
+            const y = (window.innerHeight - e.pageY * 2) / 100;
+
+            layers.forEach(layer => {
+                const speed = layer.getAttribute('data-speed');
+                const xPos = x * speed * 100;
+                const yPos = y * speed * 20; // Reduce vertical movement
+                
+                layer.style.transform = `translate(${xPos}px, ${yPos}px)`;
+            });
+        });
+
+        // Mobile gyroscope support (optional polish)
+        if(window.DeviceOrientationEvent) {
+            window.addEventListener('deviceorientation', (event) => {
+                const layers = document.querySelectorAll('.layer');
+                const x = event.gamma; // tilt left/right
+                const y = event.beta;  // tilt front/back
+                
+                layers.forEach(layer => {
+                    const speed = layer.getAttribute('data-speed');
+                    layer.style.transform = `translate(${x * speed * 2}px, ${y * speed * 2}px)`;
+                });
+            });
+        }
+    </script>
+</body>
+</html>
